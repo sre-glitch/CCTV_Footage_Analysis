@@ -45,84 +45,53 @@ store-intelligence/
 
 ## CCTV Dataset (this project)
 
-| Item | Location |
-|------|----------|
-| Raw videos | `C:\Users\sreya\Downloads\resources\CCTV Footage-20260529T160731Z-3-00144614ea\CCTV Footage` |
-| Files | `CAM 1.mp4` … `CAM 5.mp4` (~2–2.5 min each, 1920×1080) |
-| Raw POS CSV | `C:\Users\sreya\Downloads\resources\Brigade_Bangalore_10_April_26 (1)bc6219c.csv` |
-| Aligned POS CSV | `data/pos_transactions.csv` (Mapped using `convert_pos.py` to match event dates) |
-| Layout | `data/store_layout.json` |
+|
+ Item 
+|
+ Location 
+|
+|
+------
+|
+----------
+|
+|
+ Raw videos 
+|
+`C:\Users\sreya\Downloads\resources\CCTV Footage-20260529T160731Z-3-00144614ea\CCTV Footage`
+|
+|
+ Files 
+|
+`CAM 1.mp4`
+ … 
+`CAM 5.mp4`
+ (~2–2.5 min each, 1920×1080) 
+|
+|
+ Raw POS CSV 
+|
+`C:\Users\sreya\Downloads\resources\Brigade_Bangalore_10_April_26 (1)bc6219c.csv`
+|
+|
+ Aligned POS CSV 
+|
+`data/pos_transactions.csv`
+ (Mapped using 
+`convert_pos.py`
+ to match event dates) 
+|
+|
+ Layout 
+|
+`data/store_layout.json`
+|
 
 ### Verified camera mapping
 
-Preview frames in `data/previews/` were reviewed and `data/camera_map.json` was corrected:
-
-| File | Logical camera | Scene |
-|------|----------------|-------|
-| CAM 1 | `ENTRY_CAMERA` | Main sales floor, shopper traffic |
-| CAM 2 | `FLOOR_CAMERA` | Cosmetics aisles, makeup station |
-| CAM 3 | `AUX_CAMERA_1` | Store entrance / glass doors |
-| CAM 4 | `AUX_CAMERA_2` | Stock room (low shopper signal) |
-| CAM 5 | `BILLING_CAMERA` | Checkout counter + scanner |
-
-See `data/CAMERA_ASSIGNMENTS.md` for the full verification notes.
-
-## Setup
-
-**Requirements:** Node 20+, Python 3.10+, pip, optional Docker.
-
-```bash
-# Node / monorepo
-corepack enable   # or: npx pnpm@9.12.0 <cmd>
-pnpm install
-cp .env.example .env
-
-pnpm db:generate
-pnpm db:migrate
-```
-
-**Python (detection pipeline):**
-
-```bash
-pip install -r packages/pipeline/requirements.txt
-```
-
-Default `.env` uses SQLite at `file:./apps/api/prisma/dev.db`.
-
-## Installation
-
-| Command | Purpose |
-|---------|---------|
-| `pnpm install` | Install monorepo dependencies |
-| `pnpm db:generate` | Generate Prisma client |
-| `pnpm db:migrate` | Apply migrations |
-| `pnpm db:seed` | Load POS CSV |
-| `pnpm db:seed:events` | Load `data/events.jsonl` into DB |
-
-## Pipeline Execution
-
-### 1. Preview cameras (verify assignments)
-
-Fast single-frame YOLO preview (~15s). Outputs JPGs + manifest:
-
-```bash
-pnpm pipeline:preview
-```
-
-Open `data/previews/*_detections.jpg`. Adjust `data/camera_map.json` if needed.
-
-### 2. Generate events from CCTV
-
-Full YOLOv8n + ByteTrack pass on all five clips (~5–6 min on CPU):
-
-```bash
-pnpm pipeline:cctv
-```
-
-Or explicitly:
-
 ```bash
 python packages/pipeline/emit.py \
+  --videos "C:/Users/sreya/Downloads/CCTV Footage-20260529T160731Z-3-00144614ea/CCTV Footage" \
   --videos "C:/Users/sreya/Downloads/resources/CCTV Footage-20260529T160731Z-3-00144614ea/CCTV Footage" \
   --layout ./data/store_layout.json \
   --camera-map ./data/camera_map.json \
@@ -178,14 +147,62 @@ Validated in `packages/shared/src/schemas/event.ts`.
 
 Base URL: `http://localhost:4000`
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/events/ingest` | Validate, dedupe, store ≤500 events |
-| `GET` | `/stores/:id/metrics` | Visitors, conversion, dwell, queue, abandonment |
-| `GET` | `/stores/:id/funnel` | ENTRY → ZONE → BILLING → PURCHASE |
-| `GET` | `/stores/:id/heatmap` | Zone visits, dwell, normalized score |
-| `GET` | `/stores/:id/anomalies` | QUEUE_SPIKE, CONVERSION_DROP, DEAD_ZONE |
-| `GET` | `/health` | Status, last event time, stale feed flag |
+|
+ Method 
+|
+ Path 
+|
+ Description 
+|
+|
+--------
+|
+------
+|
+-------------
+|
+|
+`POST`
+|
+`/events/ingest`
+|
+ Validate, dedupe, store ≤500 events 
+|
+|
+`GET`
+|
+`/stores/:id/metrics`
+|
+ Visitors, conversion, dwell, queue, abandonment 
+|
+|
+`GET`
+|
+`/stores/:id/funnel`
+|
+ ENTRY → ZONE → BILLING → PURCHASE 
+|
+|
+`GET`
+|
+`/stores/:id/heatmap`
+|
+ Zone visits, dwell, normalized score 
+|
+|
+`GET`
+|
+`/stores/:id/anomalies`
+|
+ QUEUE_SPIKE, CONVERSION_DROP, DEAD_ZONE 
+|
+|
+`GET`
+|
+`/health`
+|
+ Status, last event time, stale feed flag 
+|
 
 Store ID for this dataset: `store_001`.
 
@@ -216,13 +233,41 @@ Starts API (migrate + seed) and web on SQLite. API `:4000`, dashboard `:3000`.
 
 ## pnpm Scripts
 
-| Script | Action |
-|--------|--------|
-| `pnpm dev` | Turbo dev (api + web) |
-| `pnpm test` | Run all package tests |
-| `pnpm pipeline:preview` | Camera preview JPGs |
-| `pnpm pipeline:cctv` | Full CCTV → events.jsonl |
-| `pnpm db:seed:events` | Seed events from JSONL |
+|
+ Script 
+|
+ Action 
+|
+|
+--------
+|
+--------
+|
+|
+`pnpm dev`
+|
+ Turbo dev (api + web) 
+|
+|
+`pnpm test`
+|
+ Run all package tests 
+|
+|
+`pnpm pipeline:preview`
+|
+ Camera preview JPGs 
+|
+|
+`pnpm pipeline:cctv`
+|
+ Full CCTV → events.jsonl 
+|
+|
+`pnpm db:seed:events`
+|
+ Seed events from JSONL 
+|
 
 ## Known Limitations
 
