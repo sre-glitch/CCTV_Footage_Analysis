@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     globalSetup: ["./tests/globalSetup.ts"],
     env: {
-      DATABASE_URL: "file:./prisma/test.db"
+      DATABASE_URL: "file:./test.db"
     },
     environment: "node",
     coverage: {

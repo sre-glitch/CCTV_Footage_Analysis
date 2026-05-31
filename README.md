@@ -47,9 +47,10 @@ store-intelligence/
 
 | Item | Location |
 |------|----------|
-| Raw videos | `C:\Users\sreya\Downloads\CCTV Footage-20260529T160731Z-3-00144614ea\CCTV Footage` |
+| Raw videos | `C:\Users\sreya\Downloads\resources\CCTV Footage-20260529T160731Z-3-00144614ea\CCTV Footage` |
 | Files | `CAM 1.mp4` … `CAM 5.mp4` (~2–2.5 min each, 1920×1080) |
-| POS | `data/pos_transactions.csv` |
+| Raw POS CSV | `C:\Users\sreya\Downloads\resources\Brigade_Bangalore_10_April_26 (1)bc6219c.csv` |
+| Aligned POS CSV | `data/pos_transactions.csv` (Mapped using `convert_pos.py` to match event dates) |
 | Layout | `data/store_layout.json` |
 
 ### Verified camera mapping
@@ -122,7 +123,7 @@ Or explicitly:
 
 ```bash
 python packages/pipeline/emit.py \
-  --videos "C:/Users/sreya/Downloads/CCTV Footage-20260529T160731Z-3-00144614ea/CCTV Footage" \
+  --videos "C:/Users/sreya/Downloads/resources/CCTV Footage-20260529T160731Z-3-00144614ea/CCTV Footage" \
   --layout ./data/store_layout.json \
   --camera-map ./data/camera_map.json \
   --output ./data/events.jsonl
