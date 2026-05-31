@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  event_id   String   @id
+  store_id   String
+  camera_id  String
+  visitor_id String
+  event_type String
+  timestamp  DateTime
+  zone_id    String?
+  dwell_ms   Int
+  is_staff   Boolean
+  confidence Float
+  metadata   String
+  created_at DateTime @default(now())
+
+  @@index([store_id, timestamp])
+  @@index([visitor_id])
+}
+
+model PosTransaction {
+  transaction_id String   @id
+  store_id       String
+  timestamp      DateTime
+  basket_value   Float
+  created_at     DateTime @default(now())
+
+  @@index([store_id, timestamp])
+}

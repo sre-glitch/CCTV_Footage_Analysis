@@ -1,0 +1,51 @@
+export const EVENT_TYPES = [
+  "ENTRY",
+  "EXIT",
+  "ZONE_ENTER",
+  "ZONE_EXIT",
+  "ZONE_DWELL",
+  "BILLING_QUEUE_JOIN",
+  "BILLING_QUEUE_ABANDON",
+  "REENTRY"
+] as const;
+
+export const CAMERA_IDS = [
+  "ENTRY_CAMERA",
+  "FLOOR_CAMERA",
+  "BILLING_CAMERA",
+  "AUX_CAMERA_1",
+  "AUX_CAMERA_2"
+] as const;
+
+export const ZONE_IDS = [
+  "SALM",
+  "TFS",
+  "GV",
+  "DERMDO",
+  "MINIMALIST",
+  "AQUALOGICA",
+  "FOXTALE",
+  "JC",
+  "MAYBELLINE",
+  "FACES",
+  "LAKME",
+  "MARS",
+  "MENS_CARE",
+  "ALPS",
+  "LOREAL",
+  "BEAUTY",
+  "FOH",
+  "MAKEUP_UNIT",
+  "CASH_COUNTER",
+  "ENTRY",
+  "EXIT"
+] as const;
+
+export const ERROR_CODES = {
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+  DATABASE_UNAVAILABLE: "DATABASE_UNAVAILABLE",
+  BATCH_TOO_LARGE: "BATCH_TOO_LARGE"
+} as const;
+
+export const POS_CORRELATION_WINDOW_MS = 5 * 60 * 1000;
+export const DWELL_EMIT_INTERVAL_MS = 30 * 1000;

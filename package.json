@@ -1,0 +1,22 @@
+{
+  "name": "store-intelligence",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "db:generate": "pnpm --filter @store/api prisma:generate",
+    "db:migrate": "pnpm --filter @store/api prisma:migrate",
+    "db:seed": "pnpm --filter @store/api prisma:seed",
+    "pipeline": "python packages/pipeline/emit.py",
+    "pipeline:cctv": "python packages/pipeline/emit.py --videos \"C:/Users/sreya/Downloads/CCTV Footage-20260529T160731Z-3-00144614ea/CCTV Footage\" --layout ./data/store_layout.json --output ./data/events.jsonl --camera-map ./data/camera_map.json",
+    "pipeline:preview": "python packages/pipeline/preview_cameras.py --videos \"C:/Users/sreya/Downloads/CCTV Footage-20260529T160731Z-3-00144614ea/CCTV Footage\" --camera-map ./data/camera_map.json --output ./data/previews",
+    "db:seed:events": "cd apps/api && cross-env DATABASE_URL=file:./prisma/dev.db tsx prisma/seed.ts"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.6.3"
+  }
+}

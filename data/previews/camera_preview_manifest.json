@@ -1,0 +1,62 @@
+{
+  "videos_dir": "C:\\Users\\sreya\\Downloads\\CCTV Footage-20260529T160731Z-3-00144614ea\\CCTV Footage",
+  "camera_map": {
+    "CAM 1": "ENTRY_CAMERA",
+    "CAM 2": "FLOOR_CAMERA",
+    "CAM 3": "BILLING_CAMERA",
+    "CAM 4": "AUX_CAMERA_1",
+    "CAM 5": "AUX_CAMERA_2"
+  },
+  "cameras": {
+    "AUX_CAMERA_1": {
+      "source_file": "CAM 4.mp4",
+      "frame_index": 547,
+      "fps": 24.98,
+      "total_frames": 3647,
+      "duration_sec": 146.0,
+      "detections_near_sample": 0,
+      "preview_frame": "..\\..\\data\\previews\\AUX_CAMERA_1_frame.jpg",
+      "preview_detections": "..\\..\\data\\previews\\AUX_CAMERA_1_detections.jpg"
+    },
+    "AUX_CAMERA_2": {
+      "source_file": "CAM 5.mp4",
+      "frame_index": 519,
+      "fps": 24.98,
+      "total_frames": 3465,
+      "duration_sec": 138.7,
+      "detections_near_sample": 2,
+      "preview_frame": "..\\..\\data\\previews\\AUX_CAMERA_2_frame.jpg",
+      "preview_detections": "..\\..\\data\\previews\\AUX_CAMERA_2_detections.jpg"
+    },
+    "BILLING_CAMERA": {
+      "source_file": "CAM 3.mp4",
+      "frame_index": 665,
+      "fps": 29.97,
+      "total_frames": 4436,
+      "duration_sec": 148.0,
+      "detections_near_sample": 1,
+      "preview_frame": "..\\..\\data\\previews\\BILLING_CAMERA_frame.jpg",
+      "preview_detections": "..\\..\\data\\previews\\BILLING_CAMERA_detections.jpg"
+    },
+    "ENTRY_CAMERA": {
+      "source_file": "CAM 1.mp4",
+      "frame_index": 628,
+      "fps": 29.97,
+      "total_frames": 4193,
+      "duration_sec": 139.9,
+      "detections_near_sample": 3,
+      "preview_frame": "..\\..\\data\\previews\\ENTRY_CAMERA_frame.jpg",
+      "preview_detections": "..\\..\\data\\previews\\ENTRY_CAMERA_detections.jpg"
+    },
+    "FLOOR_CAMERA": {
+      "source_file": "CAM 2.mp4",
+      "frame_index": 566,
+      "fps": 29.97,
+      "total_frames": 3774,
+      "duration_sec": 125.9,
+      "detections_near_sample": 5,
+      "preview_frame": "..\\..\\data\\previews\\FLOOR_CAMERA_frame.jpg",
+      "preview_detections": "..\\..\\data\\previews\\FLOOR_CAMERA_detections.jpg"
+    }
+  }
+}

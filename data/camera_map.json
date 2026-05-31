@@ -1,0 +1,7 @@
+{
+  "CAM 1": "ENTRY_CAMERA",
+  "CAM 2": "FLOOR_CAMERA",
+  "CAM 3": "AUX_CAMERA_1",
+  "CAM 4": "AUX_CAMERA_2",
+  "CAM 5": "BILLING_CAMERA"
+}
