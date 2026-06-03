@@ -9,7 +9,7 @@ import {
   TrendingUp
 } from "lucide-react";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 import {
@@ -29,18 +29,20 @@ import { StatCard } from "../../components/ui/StatCard";
 const fmtPct = (value: number) => `${Math.round(value * 100)}%`;
 
 export function Dashboard() {
-  const { metrics, funnel, heatmap, anomalies, loading, refresh } =
+  const [storeId, setStoreId] = useState("store_001");
+
+  const { metrics, funnel, heatmap, anomalies, refresh } =
     useDashboardStore();
 
   useEffect(() => {
-    refresh("store_001");
+    refresh(storeId);
 
     const timer = setInterval(() => {
-      refresh("store_001");
+      refresh(storeId);
     }, 10000);
 
     return () => clearInterval(timer);
-  }, [refresh]);
+  }, [refresh, storeId]);
 
   const funnelData =
     funnel?.stages.map((stage) => ({
@@ -64,13 +66,23 @@ export function Dashboard() {
           <h1>Store Intelligence Dashboard</h1>
         </div>
 
-        <button
-          className="refreshButton"
-          onClick={() => refresh("store_001")}
-        >
-          <RefreshCw size={18} />
-          Refresh
-        </button>
+        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          <select
+            value={storeId}
+            onChange={(e) => setStoreId(e.target.value)}
+          >
+            <option value="store_001">Store 1</option>
+            <option value="store_002">Store 2</option>
+          </select>
+
+          <button
+            className="refreshButton"
+            onClick={() => refresh(storeId)}
+          >
+            <RefreshCw size={18} />
+            Refresh
+          </button>
+        </div>
       </header>
 
       <section className="stats">
@@ -133,15 +145,13 @@ export function Dashboard() {
             <AreaChart data={heatmapData}>
               <defs>
                 <linearGradient id="colorVisits">
-                  <stop offset="5%" stopColor="#4f8cff" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#4f8cff" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#4f8cff" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#4f8cff" stopOpacity={0} />
                 </linearGradient>
               </defs>
 
               <CartesianGrid strokeDasharray="3 3" />
-
               <XAxis dataKey="name" />
-
               <Tooltip />
 
               <Area
@@ -162,7 +172,6 @@ export function Dashboard() {
         >
           <div className="panelHeader">
             <h2>Anomaly Detection</h2>
-
             <TrendingUp size={18} />
           </div>
 

@@ -7,3 +7,11 @@ coverage
 *.db
 *.db-journal
 work
+.pnpm-store/
+__pycache__/
+*.pyc
+data/store1_videos/
+data/store2_videos/
+data/store1_previews/
+data/store2_previews/
+data/store2_events_backup.jsonl

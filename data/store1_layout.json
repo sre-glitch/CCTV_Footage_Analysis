@@ -1,0 +1,37 @@
+{
+  "store": {
+    "id": "store_001",
+    "name": "Apex Retail Demo Store",
+    "timezone": "Asia/Kolkata"
+  },
+  "cameras": [
+    { "id": "ENTRY_CAMERA", "covers": ["ENTRY", "EXIT", "FOH"], "source_file": "CAM 1.mp4" },
+    { "id": "FLOOR_CAMERA", "covers": ["FOH", "MAKEUP_UNIT", "MAYBELLINE", "FACES", "LAKME", "MARS"], "source_file": "CAM 2.mp4" },
+    { "id": "BILLING_CAMERA", "covers": ["CASH_COUNTER"], "source_file": "CAM 5.mp4" },
+    { "id": "AUX_CAMERA_1", "covers": ["ENTRY", "EXIT", "SALM", "TFS", "GV", "DERMDO", "MINIMALIST", "AQUALOGICA", "FOXTALE", "JC"], "source_file": "CAM 3.mp4" },
+    { "id": "AUX_CAMERA_2", "covers": ["MENS_CARE", "ALPS", "LOREAL", "BEAUTY"], "source_file": "CAM 4.mp4" }
+  ],
+  "zones": [
+    { "id": "ENTRY", "polygon": [[0, 85], [20, 85], [20, 100], [0, 100]] },
+    { "id": "EXIT", "polygon": [[80, 85], [100, 85], [100, 100], [80, 100]] },
+    { "id": "FOH", "polygon": [[30, 50], [70, 50], [70, 80], [30, 80]] },
+    { "id": "MAKEUP_UNIT", "polygon": [[40, 30], [60, 30], [60, 48], [40, 48]] },
+    { "id": "CASH_COUNTER", "polygon": [[72, 20], [100, 20], [100, 44], [72, 44]] },
+    { "id": "SALM", "polygon": [[0, 0], [12, 0], [12, 12], [0, 12]] },
+    { "id": "TFS", "polygon": [[12, 0], [24, 0], [24, 12], [12, 12]] },
+    { "id": "GV", "polygon": [[24, 0], [36, 0], [36, 12], [24, 12]] },
+    { "id": "DERMDO", "polygon": [[36, 0], [48, 0], [48, 12], [36, 12]] },
+    { "id": "MINIMALIST", "polygon": [[48, 0], [60, 0], [60, 12], [48, 12]] },
+    { "id": "AQUALOGICA", "polygon": [[60, 0], [72, 0], [72, 12], [60, 12]] },
+    { "id": "FOXTALE", "polygon": [[72, 0], [84, 0], [84, 12], [72, 12]] },
+    { "id": "JC", "polygon": [[84, 0], [100, 0], [100, 12], [84, 12]] },
+    { "id": "MAYBELLINE", "polygon": [[0, 70], [12, 70], [12, 84], [0, 84]] },
+    { "id": "FACES", "polygon": [[12, 70], [24, 70], [24, 84], [12, 84]] },
+    { "id": "LAKME", "polygon": [[24, 70], [36, 70], [36, 84], [24, 84]] },
+    { "id": "MARS", "polygon": [[36, 70], [48, 70], [48, 84], [36, 84]] },
+    { "id": "MENS_CARE", "polygon": [[48, 70], [60, 70], [60, 84], [48, 84]] },
+    { "id": "ALPS", "polygon": [[60, 70], [72, 70], [72, 84], [60, 84]] },
+    { "id": "LOREAL", "polygon": [[72, 70], [84, 70], [84, 84], [72, 84]] },
+    { "id": "BEAUTY", "polygon": [[84, 70], [100, 70], [100, 84], [84, 84]] }
+  ]
+}

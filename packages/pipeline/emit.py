@@ -9,7 +9,7 @@ from pathlib import Path
 from detect import detect_people
 from tracker import track, TrackPoint
 
-STORE_ID = "store_001"
+STORE_ID = "store_002"
 ENTRY_CAMERA = "ENTRY_CAMERA"
 DWELL_INTERVAL_FRAMES = 30 * 30  # ~30s at 30fps
 
