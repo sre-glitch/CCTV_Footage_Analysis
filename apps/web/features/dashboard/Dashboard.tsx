@@ -1,83 +1,190 @@
 "use client";
 
-import { AlertTriangle, Percent, ShoppingBag, Users, Waves } from "lucide-react";
+import {
+  AlertTriangle,
+  Percent,
+  ShoppingBag,
+  Users,
+  RefreshCw,
+  TrendingUp
+} from "lucide-react";
+
 import { useEffect } from "react";
+import { motion } from "framer-motion";
+
+import {
+  ResponsiveContainer,
+  FunnelChart,
+  Funnel,
+  Tooltip,
+  AreaChart,
+  Area,
+  XAxis,
+  CartesianGrid
+} from "recharts";
+
 import { useDashboardStore } from "../../store/dashboard";
 import { StatCard } from "../../components/ui/StatCard";
 
 const fmtPct = (value: number) => `${Math.round(value * 100)}%`;
 
 export function Dashboard() {
-  const { metrics, funnel, heatmap, anomalies, loading, refresh } = useDashboardStore();
+  const { metrics, funnel, heatmap, anomalies, loading, refresh } =
+    useDashboardStore();
 
   useEffect(() => {
     refresh("store_001");
-    const timer = window.setInterval(() => refresh("store_001"), 10000);
-    return () => window.clearInterval(timer);
+
+    const timer = setInterval(() => {
+      refresh("store_001");
+    }, 10000);
+
+    return () => clearInterval(timer);
   }, [refresh]);
 
-  if (loading && !metrics) return <main className="shell">Loading store intelligence...</main>;
+  const funnelData =
+    funnel?.stages.map((stage) => ({
+      name: stage.stage,
+      value: stage.count
+    })) ?? [];
+
+  const heatmapData =
+    heatmap?.zones.map((z) => ({
+      name: z.zoneId,
+      visits: z.visits
+    })) ?? [];
 
   return (
     <main className="shell">
+      <div className="backgroundGlow" />
+
       <header className="topbar">
         <div>
-          <p className="eyebrow">Apex Retail</p>
-          <h1>Store Intelligence</h1>
+          <span className="eyebrow">Apex Retail Analytics</span>
+          <h1>Store Intelligence Dashboard</h1>
         </div>
-        <button className="iconButton" onClick={() => refresh("store_001")} title="Refresh dashboard">
-          <Waves size={18} />
+
+        <button
+          className="refreshButton"
+          onClick={() => refresh("store_001")}
+        >
+          <RefreshCw size={18} />
+          Refresh
         </button>
       </header>
 
       <section className="stats">
-        <StatCard label="Visitors" value={`${metrics?.uniqueVisitors ?? 0}`} icon={Users} />
-        <StatCard label="Conversion" value={fmtPct(metrics?.conversionRate ?? 0)} icon={Percent} tone="good" />
-        <StatCard label="Queue Depth" value={`${metrics?.queueDepth ?? 0}`} icon={ShoppingBag} tone={(metrics?.queueDepth ?? 0) >= 5 ? "warn" : "neutral"} />
-        <StatCard label="Anomalies" value={`${anomalies.length}`} icon={AlertTriangle} tone={anomalies.length ? "warn" : "good"} />
+        <StatCard
+          label="Visitors"
+          value={`${metrics?.uniqueVisitors ?? 0}`}
+          icon={Users}
+        />
+
+        <StatCard
+          label="Conversion"
+          value={fmtPct(metrics?.conversionRate ?? 0)}
+          icon={Percent}
+          tone="good"
+        />
+
+        <StatCard
+          label="Queue Depth"
+          value={`${metrics?.queueDepth ?? 0}`}
+          icon={ShoppingBag}
+          tone="warn"
+        />
+
+        <StatCard
+          label="Anomalies"
+          value={`${anomalies.length}`}
+          icon={AlertTriangle}
+          tone="warn"
+        />
       </section>
 
       <section className="grid">
-        <div className="panel">
-          <h2>Funnel</h2>
-          <div className="funnel">
-            {funnel?.stages.map((stage) => (
-              <div key={stage.stage} className="funnelRow">
-                <span>{stage.stage}</span>
-                <b>{stage.count}</b>
-                <progress value={stage.conversionPct} max={1} />
-                <small>{fmtPct(stage.conversionPct)}</small>
-              </div>
-            ))}
-          </div>
-        </div>
+        <motion.div
+          className="panel"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <h2>Conversion Funnel</h2>
 
-        <div className="panel">
-          <h2>Heatmap</h2>
-          <p className="muted">Confidence: {heatmap?.dataConfidence ?? "LOW"}</p>
-          <div className="heatmap">
-            {heatmap?.zones.slice(0, 12).map((zone) => (
-              <div key={zone.zoneId} className="zone" style={{ ["--score" as string]: zone.normalizedScore }}>
-                <span>{zone.zoneId}</span>
-                <b>{zone.visits}</b>
-              </div>
-            ))}
-          </div>
-        </div>
+          <ResponsiveContainer width="100%" height={280}>
+            <FunnelChart>
+              <Tooltip />
+              <Funnel
+                dataKey="value"
+                data={funnelData}
+                isAnimationActive
+              />
+            </FunnelChart>
+          </ResponsiveContainer>
+        </motion.div>
 
-        <div className="panel wide">
-          <h2>Anomalies</h2>
+        <motion.div
+          className="panel"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <h2>Zone Engagement</h2>
+
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart data={heatmapData}>
+              <defs>
+                <linearGradient id="colorVisits">
+                  <stop offset="5%" stopColor="#4f8cff" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#4f8cff" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+
+              <CartesianGrid strokeDasharray="3 3" />
+
+              <XAxis dataKey="name" />
+
+              <Tooltip />
+
+              <Area
+                type="monotone"
+                dataKey="visits"
+                stroke="#4f8cff"
+                fillOpacity={1}
+                fill="url(#colorVisits)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </motion.div>
+
+        <motion.div
+          className="panel wide"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="panelHeader">
+            <h2>Anomaly Detection</h2>
+
+            <TrendingUp size={18} />
+          </div>
+
           <div className="anomalies">
-            {anomalies.length === 0 ? <p className="muted">No active anomalies.</p> : null}
             {anomalies.map((anomaly, index) => (
-              <article key={`${anomaly.type}-${index}`} className="anomaly">
-                <strong>{anomaly.type}</strong>
-                <span>{anomaly.severity}</span>
-                <p>{anomaly.suggestedAction}</p>
-              </article>
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.01 }}
+                className="anomaly"
+              >
+                <div>
+                  <strong>{anomaly.type}</strong>
+                  <p>{anomaly.suggestedAction}</p>
+                </div>
+
+                <span className={`severity ${anomaly.severity}`}>
+                  {anomaly.severity}
+                </span>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
     </main>
   );
