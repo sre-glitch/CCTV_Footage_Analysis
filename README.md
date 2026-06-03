@@ -1,292 +1,461 @@
 # Store Intelligence Platform
 
-Production-oriented implementation that turns CCTV footage and POS data into offline retail intelligence: visitor counts, conversion rate, zone heatmaps, queue signals, and rule-based anomalies.
+A multi-store retail analytics platform that transforms CCTV footage and POS transaction data into actionable business intelligence using Computer Vision, Event Processing, Fastify APIs, Prisma, and a modern React dashboard.
 
-**North star metric:** offline store conversion rate = visitors who purchased ÷ unique visitors (staff excluded).
+---
 
-## Architecture Diagram
+## Overview
 
-```mermaid
-flowchart LR
-  CCTV["5 CCTV feeds\nCAM 1-5.mp4"] --> Preview["preview_cameras.py"]
-  CCTV --> Pipeline["emit.py\nYOLOv8n + ByteTrack"]
-  Layout["store_layout.json"] --> Pipeline
-  Map["camera_map.json"] --> Pipeline
-  Pipeline --> Events["data/events.jsonl"]
-  Events --> Ingest["POST /events/ingest"]
-  POS["pos_transactions.csv"] --> Seed["prisma/seed.ts"]
-  Ingest --> DB[(SQLite / PostgreSQL)]
-  DB --> API["Fastify API :4000"]
-  API --> Web["Next.js dashboard :3000"]
+Store Intelligence Platform is an end-to-end retail analytics system designed to convert raw CCTV footage and transaction data into meaningful business insights.
+
+The platform automatically detects customer activity, tracks movement across store zones, generates structured retail events, correlates purchases, and visualizes store performance through an interactive dashboard.
+
+### Problem Statement
+
+Retail stores generate large amounts of CCTV footage every day, but very little actionable insight.
+
+Store managers often struggle to answer questions such as:
+
+* How many customers entered the store?
+* Which sections receive the most engagement?
+* Where are customers dropping off?
+* How long are checkout queues?
+* Which store is performing better?
+* What operational anomalies require attention?
+
+This platform transforms CCTV footage into measurable retail intelligence.
+
+---
+
+## Features
+
+### CCTV Analytics
+
+* YOLO-based customer detection
+* Multi-camera visitor tracking
+* Entry and exit detection
+* Zone-level movement analysis
+* Dwell-time measurement
+
+### Event Intelligence
+
+Converts raw video activity into structured events:
+
+* ENTRY
+* EXIT
+* REENTRY
+* ZONE_ENTER
+* ZONE_EXIT
+* ZONE_DWELL
+* BILLING_QUEUE_JOIN
+* BILLING_QUEUE_ABANDON
+
+### Dashboard Analytics
+
+* Visitor Counts
+* Conversion Rate
+* Queue Depth
+* Conversion Funnel
+* Zone Heatmaps
+* Anomaly Detection
+
+### Multi-Store Support
+
+The platform supports multiple stores with independent:
+
+* CCTV feeds
+* Camera mappings
+* Layout definitions
+* Event datasets
+* Analytics dashboards
+
+Users can dynamically switch between stores from the dashboard.
+
+---
+
+## System Architecture
+
+```text
+CCTV Cameras
+      │
+      ▼
+YOLO Detection
+      │
+      ▼
+Visitor Tracking
+      │
+      ▼
+Event Generation
+      │
+      ▼
+JSONL Event Stream
+      │
+      ▼
+Prisma Database
+      │
+      ▼
+Fastify API
+      │
+      ▼
+React Dashboard
 ```
 
-## Folder Structure
+---
 
+## Dashboard Screenshots
+
+### Main Dashboard
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Store Selection
+
+![Store Selector](docs/screenshots/store-selector.png)
+
+### Conversion Funnel
+
+![Funnel](docs/screenshots/funnel.png)
+
+### Zone Analytics
+
+![Heatmap](docs/screenshots/heatmap.png)
+
+---
+
+## Multi-Store Architecture
+
+The platform currently supports two stores.
+
+### Store 1
+
+```text
+store_001
 ```
+
+Features:
+
+* Dedicated CCTV feeds
+* Independent layout mapping
+* Independent camera mapping
+* Separate analytics generation
+
+### Store 2
+
+```text
+store_002
+```
+
+Features:
+
+* Dedicated CCTV feeds
+* Independent layout mapping
+* Independent camera mapping
+* Separate analytics generation
+
+The dashboard can switch between stores without restarting any service.
+
+---
+
+## Analytics Explained
+
+### Visitors
+
+Tracks unique customer sessions entering the store.
+
+### Conversion Rate
+
+Measures how many visitors eventually make a purchase.
+
+```text
+Conversion Rate =
+Purchasing Visitors ÷ Total Visitors
+```
+
+Example:
+
+```text
+100 Visitors
+25 Purchases
+
+Conversion Rate = 25%
+```
+
+### Queue Depth
+
+Measures checkout congestion.
+
+Example:
+
+```text
+Queue Depth = 8
+```
+
+indicates 8 customers waiting in the billing queue.
+
+### Conversion Funnel
+
+Visualizes customer progression through the store journey.
+
+```text
+100 Entered Store
+        ↓
+75 Browsed Products
+        ↓
+40 Reached Billing Area
+        ↓
+25 Purchased
+```
+
+Helps identify customer drop-off points.
+
+### Heatmap Analytics
+
+Shows customer engagement by zone.
+
+Example:
+
+```text
+SNACKS        → 220 Visits
+MARS          → 180 Visits
+CASH_COUNTER  → 95 Visits
+```
+
+Used to identify popular and underperforming areas.
+
+### Anomaly Detection
+
+Automatically identifies unusual retail behavior.
+
+Examples:
+
+* Queue Spikes
+* Conversion Drops
+* Dead Zones
+* Low Engagement Areas
+
+---
+
+## Technology Stack
+
+### Frontend
+
+* Next.js 14
+* React
+* TypeScript
+* Zustand
+* Recharts
+* Framer Motion
+* Lucide React
+
+### Backend
+
+* Fastify
+* Prisma ORM
+* SQLite
+
+### Computer Vision
+
+* Python
+* YOLO
+* OpenCV
+
+### Infrastructure
+
+* Docker
+* Docker Compose
+* PNPM Monorepo
+* Turbo
+
+---
+
+## Repository Structure
+
+```text
 store-intelligence/
 ├── apps/
-│   ├── api/          # Fastify backend (routes → controllers → services → repositories)
-│   └── web/          # Next.js 14 dashboard (Zustand)
+│   ├── api/
+│   └── web/
+│
 ├── packages/
-│   ├── shared/       # Types, Zod schemas, analytics utils (single source of truth)
-│   └── pipeline/     # detect.py, tracker.py, emit.py, preview_cameras.py
+│   ├── pipeline/
+│   └── shared/
+│
 ├── data/
-│   ├── videos_path.txt
-│   ├── camera_map.json
-│   ├── store_layout.json
-│   ├── pos_transactions.csv
-│   ├── events.jsonl          # generated
-│   ├── previews/             # camera verification images
-│   └── CAMERA_ASSIGNMENTS.md
-├── docs/             # DESIGN.md, CHOICES.md
-├── scripts/          # docker-api.sh, docker-web.sh
-└── docker-compose.yml
+│   ├── store1_videos/
+│   ├── store2_videos/
+│   ├── store1_layout.json
+│   ├── store2_layout.json
+│   ├── store1_camera_map.json
+│   ├── store2_camera_map.json
+│   ├── store1_events.jsonl
+│   ├── store2_events.jsonl
+│   ├── all_events.jsonl
+│   └── events.jsonl
+│
+├── docs/
+├── docker-compose.yml
+└── README.md
 ```
 
-## CCTV Dataset (this project)
+---
 
-|
- Item 
-|
- Location 
-|
-|
-------
-|
-----------
-|
-|
- Raw videos 
-|
-`C:\Users\sreya\Downloads\resources\CCTV Footage-20260529T160731Z-3-00144614ea\CCTV Footage`
-|
-|
- Files 
-|
-`CAM 1.mp4`
- … 
-`CAM 5.mp4`
- (~2–2.5 min each, 1920×1080) 
-|
-|
- Raw POS CSV 
-|
-`C:\Users\sreya\Downloads\resources\Brigade_Bangalore_10_April_26 (1)bc6219c.csv`
-|
-|
- Aligned POS CSV 
-|
-`data/pos_transactions.csv`
- (Mapped using 
-`convert_pos.py`
- to match event dates) 
-|
-|
- Layout 
-|
-`data/store_layout.json`
-|
+## Event Processing Pipeline
 
-### Verified camera mapping
+### Store 1
 
 ```bash
 python packages/pipeline/emit.py \
-  --videos "C:/Users/sreya/Downloads/CCTV Footage-20260529T160731Z-3-00144614ea/CCTV Footage" \
-  --videos "C:/Users/sreya/Downloads/resources/CCTV Footage-20260529T160731Z-3-00144614ea/CCTV Footage" \
-  --layout ./data/store_layout.json \
-  --camera-map ./data/camera_map.json \
-  --output ./data/events.jsonl
+  --videos data/store1_videos \
+  --layout data/store1_layout.json \
+  --camera-map data/store1_camera_map.json \
+  --output data/store1_events.jsonl
 ```
 
-### 3. Load events into the database
+### Store 2
 
 ```bash
-# Windows PowerShell
-$env:DATABASE_URL="file:./apps/api/prisma/dev.db"
-npx tsx apps/api/prisma/seed.ts
-
-# Or
-pnpm db:seed:events
+python packages/pipeline/emit.py \
+  --videos data/store2_videos \
+  --layout data/store2_layout.json \
+  --camera-map data/store2_camera_map.json \
+  --output data/store2_events.jsonl
 ```
 
-### 4. Ingest via API (alternative)
+### Combined Dataset
 
-POST batches of up to 500 events (idempotent by `event_id`):
+Both stores are merged into:
+
+```text
+data/all_events.jsonl
+```
+
+Current dataset contains:
+
+```text
+2145+ Generated Retail Events
+```
+
+---
+
+## API Endpoints
+
+Base URL:
+
+```text
+http://localhost:4000
+```
+
+| Method | Endpoint              | Description       |
+| ------ | --------------------- | ----------------- |
+| GET    | /stores/:id/metrics   | Store KPIs        |
+| GET    | /stores/:id/funnel    | Conversion Funnel |
+| GET    | /stores/:id/heatmap   | Zone Analytics    |
+| GET    | /stores/:id/anomalies | Retail Anomalies  |
+| POST   | /events/ingest        | Event Ingestion   |
+| GET    | /health               | Service Health    |
+
+---
+
+## Docker Deployment
+
+Start the complete application stack:
 
 ```bash
-curl -X POST http://localhost:4000/events/ingest \
-  -H "Content-Type: application/json" \
-  -d @payload.json
+docker compose up
 ```
 
-## Event Schema
+Services:
 
-Validated in `packages/shared/src/schemas/event.ts`.
-
-```json
-{
-  "event_id": "uuid-v4",
-  "store_id": "store_001",
-  "camera_id": "ENTRY_CAMERA",
-  "visitor_id": "visitor_session_track_3",
-  "event_type": "ENTRY",
-  "timestamp": "2026-05-30T10:00:00.000Z",
-  "zone_id": "ENTRY",
-  "dwell_ms": 0,
-  "is_staff": false,
-  "confidence": 0.84,
-  "metadata": {}
-}
+```text
+Frontend : http://localhost:3000
+Backend  : http://localhost:4000
 ```
 
-**Event types:** `ENTRY`, `EXIT`, `REENTRY`, `ZONE_ENTER`, `ZONE_EXIT`, `ZONE_DWELL`, `BILLING_QUEUE_JOIN`, `BILLING_QUEUE_ABANDON`.
+---
 
-**POS correlation:** visitor counts as converted if present in `CASH_COUNTER` within **5 minutes before** transaction timestamp.
+## Local Development
 
-## API Documentation
-
-Base URL: `http://localhost:4000`
-
-|
- Method 
-|
- Path 
-|
- Description 
-|
-|
---------
-|
-------
-|
--------------
-|
-|
-`POST`
-|
-`/events/ingest`
-|
- Validate, dedupe, store ≤500 events 
-|
-|
-`GET`
-|
-`/stores/:id/metrics`
-|
- Visitors, conversion, dwell, queue, abandonment 
-|
-|
-`GET`
-|
-`/stores/:id/funnel`
-|
- ENTRY → ZONE → BILLING → PURCHASE 
-|
-|
-`GET`
-|
-`/stores/:id/heatmap`
-|
- Zone visits, dwell, normalized score 
-|
-|
-`GET`
-|
-`/stores/:id/anomalies`
-|
- QUEUE_SPIKE, CONVERSION_DROP, DEAD_ZONE 
-|
-|
-`GET`
-|
-`/health`
-|
- Status, last event time, stale feed flag 
-|
-
-Store ID for this dataset: `store_001`.
-
-## Dashboard Usage
+Install dependencies:
 
 ```bash
-pnpm --filter @store/api dev   # http://localhost:4000
-pnpm --filter @store/web dev   # http://localhost:3000
+pnpm install
 ```
 
-The dashboard polls every 10 seconds and shows visitors, conversion %, queue depth, funnel, heatmap, and anomalies. All values are computed from ingested events (no hardcoded metrics).
-
-## Testing
+Seed the database:
 
 ```bash
-pnpm test
+pnpm db:seed
 ```
 
-Covers empty store, staff exclusion, re-entry, duplicate ingest, funnel/heatmap/anomaly math, and API integration. Each test file starts with `PROMPT:` and `CHANGES MADE:` headers per challenge requirements.
-
-## Docker Usage
+Run the application:
 
 ```bash
-docker compose up --build
+docker compose up
 ```
 
-Starts API (migrate + seed) and web on SQLite. API `:4000`, dashboard `:3000`.
+---
 
-## pnpm Scripts
+## Engineering Challenges Solved
 
-|
- Script 
-|
- Action 
-|
-|
---------
-|
---------
-|
-|
-`pnpm dev`
-|
- Turbo dev (api + web) 
-|
-|
-`pnpm test`
-|
- Run all package tests 
-|
-|
-`pnpm pipeline:preview`
-|
- Camera preview JPGs 
-|
-|
-`pnpm pipeline:cctv`
-|
- Full CCTV → events.jsonl 
-|
-|
-`pnpm db:seed:events`
-|
- Seed events from JSONL 
-|
+### Multi-Camera Tracking
 
-## Known Limitations
+Maintained visitor identity across multiple camera feeds.
 
-- **Zone mapping** uses normalized bounding-box positions against `store_layout.json` polygons without per-camera homography; zone labels are approximate until cameras are calibrated.
-- **CAM 4** covers a stock room; limited shopper zone signal.
-- **Cross-camera identity** links aux cameras to the active `ENTRY_CAMERA` session rather than full Re-ID embeddings.
-- **Short clips** (~2.5 min) — analytics confidence is `LOW` in heatmap when sessions &lt; 20.
+### Zone Mapping
+
+Mapped customer positions into business-relevant store zones.
+
+### Event Standardization
+
+Converted raw detections into structured retail events.
+
+### Multi-Store Scalability
+
+Extended the system from a single-store prototype into a multi-store analytics platform.
+
+---
+
+## Results
+
+Dataset Processed:
+
+* 2 Retail Stores
+* Multiple CCTV Feeds
+* 2145+ Generated Events
+* Multiple Customer Sessions
+
+Generated Metrics:
+
+* Visitor Counts
+* Conversion Rates
+* Queue Depth
+* Heatmaps
+* Conversion Funnels
+* Anomaly Reports
+
+---
 
 ## Future Improvements
 
-- Per-camera homography calibration from floor reference points
-- OSNet / DeepSORT Re-ID for cross-camera visitor linking
-- WebSocket dashboard streaming
-- PostgreSQL in Docker instead of SQLite
-- Staff classifier (uniform / badge heuristics)
-- Real-time ingest from RTSP feeds
+* Real-time RTSP stream ingestion
+* PostgreSQL deployment
+* Cross-camera Re-Identification
+* WebSocket dashboard streaming
+* Staff identification models
+* Queue prediction
+* Multi-branch benchmarking
 
-## Documentation
+---
 
-- `docs/DESIGN.md` — architecture and data flow
-- `docs/CHOICES.md` — detection, schema, and API tradeoffs
-- `data/CAMERA_ASSIGNMENTS.md` — CCTV verification guide
+## Impact
+
+This project demonstrates how raw CCTV footage can be transformed into actionable business intelligence through:
+
+* Computer Vision
+* Event Processing
+* Database Design
+* API Engineering
+* Dashboard Development
+* Containerized Deployment
+
+The platform provides retailers with meaningful operational insights that can improve customer experience, store performance, and business decision-making.
